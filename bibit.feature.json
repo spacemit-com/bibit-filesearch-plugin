@@ -1,0 +1,24 @@
+{
+  "manifestSchemaVersion": 1,
+  "sdkApiVersion": 1,
+  "id": "filesearch",
+  "version": "0.1.0",
+  "owner": "filesearch-team",
+  "display": {
+    "titleKey": "filesearch:title",
+    "fallbackTitle": "File Search",
+    "iconKey": "feature",
+    "descriptionKey": "filesearch:description",
+    "fallbackDescription": "Index and search local documents (bibit-filesearch standalone service)"
+  },
+  "targets": ["desktop"],
+  "requiredHostCapabilities": [],
+  "contributions": {
+    "pages": [],
+    "settings": [
+      { "id": "home", "path": "", "surfaces": ["main"], "navigation": { "group": "features", "order": 100 } }
+    ],
+    "conversation": [],
+    "locales": ["en", "zh-CN"]
+  }
+}

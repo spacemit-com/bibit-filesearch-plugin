@@ -1,0 +1,6 @@
+bibit-filesearch-plugin (0.1.0-1) unstable; urgency=medium
+
+  * Initial deb packaging: ships the signed .bibit-plugin.tgz to
+    /usr/lib/bibit/plugins where Bibit auto-discovers it.
+
+ -- liuyingjie <yingjie.liu@spacemit.com>  Wed, 02 Sep 2026 10:20:00 +0800

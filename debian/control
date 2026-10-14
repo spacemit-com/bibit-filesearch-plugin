@@ -1,0 +1,22 @@
+Source: bibit-filesearch-plugin
+Section: misc
+Priority: optional
+Maintainer: liuyingjie <yingjie.liu@spacemit.com>
+Build-Depends:
+ debhelper-compat (= 13),
+ nodejs,
+ npm,
+Standards-Version: 4.6.2
+Homepage: https://github.com/spacemit-com/bibit-filesearch-plugin
+Rules-Requires-Root: no
+Vcs-Git: https://github.com/spacemit-com/bibit-filesearch-plugin.git
+
+Package: bibit-filesearch-plugin
+Architecture: all
+Depends:
+ ${misc:Depends},
+Description: Bibit frontend plugin for bibit-filesearch
+ Provides the file-search management page inside Bibit (features group),
+ backed by the standalone bibit-filesearch service. Installs the signed
+ plugin bundle to /usr/lib/bibit/plugins where Bibit auto-discovers and
+ activates it at startup.

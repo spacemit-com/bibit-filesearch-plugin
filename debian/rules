@@ -1,0 +1,26 @@
+#!/usr/bin/make -f
+
+PACKAGE := bibit-filesearch-plugin
+PLUGIN_TGZ := artifacts/filesearch-0.1.0.bibit-plugin.tgz
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	# 签名私钥不入库：用 `npm run keygen` 生成（见 README「构建与打包」）。
+	# 私钥缺失 = 环境不完整 → 直接报错，绝不静默跳过（否则 install 会
+	# 用不到最新产物或找不到文件，把错误推迟到更隐蔽的地方）。
+	@test -f .bibit-keys/filesearch-development-private.pem \
+		|| (echo "ERROR: .bibit-keys/filesearch-development-private.pem missing — run 'npm run keygen' first (see README, 构建与打包)" >&2; exit 1)
+	[ -d node_modules ] || npm install
+	npm run build:plugin
+
+override_dh_auto_install:
+	install -d debian/$(PACKAGE)/usr/lib/bibit/plugins
+	install -m 0644 $(PLUGIN_TGZ) debian/$(PACKAGE)/usr/lib/bibit/plugins/
+
+override_dh_strip:
+override_dh_dwz:
+override_dh_shlibdeps:
+override_dh_makeshlibs:
+	# 纯数据包（JS 插件 tgz），无二进制/链接库需要处理

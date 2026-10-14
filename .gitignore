@@ -1,0 +1,17 @@
+# node_modules 入库（面向 riscv64 离线构建环境，无法访问公网 npm registry，
+# 故依赖随仓库分发；见 README「依赖锁定」节）
+# 构建输出（仅本仓根目录的 dist/）。
+# 注意必须写 `/dist/`：写成 `dist/` 会连 node_modules 里各包自带的
+# dist/ 一起忽略（ajv / vite / rollup / postcss-selector-parser…），
+# 而 node_modules 是要随仓库分发的（见「依赖锁定」）。
+/dist/
+artifacts/
+# 签名私钥不入库；用 `npm run keygen` 生成（见 README「构建与打包」）
+.bibit-keys/
+
+# debian build artifacts
+debian/.debhelper/
+debian/*.substvars
+debian/files
+debian/debhelper-build-stamp
+debian/bibit-filesearch-plugin/

@@ -1,0 +1,996 @@
+/* ==========================================================================
+   文件检索插件样式（设置 → 功能 → 文件检索）
+   - 全部收口 .fs- 命名空间，不污染宿主全局
+   - 颜色/圆角/边框一律取宿主 CSS 设计 token（--card/--border/--primary/…），
+     随宿主导航栏主题（亮/暗）自动适配，不自造色板
+   ========================================================================== */
+
+.fs-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  padding: 8px 20px 48px;
+  color: var(--foreground);
+  font-size: 14px;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+.fs-settings *,
+.fs-settings *::before,
+.fs-settings *::after {
+  box-sizing: border-box;
+}
+
+.fs-muted {
+  color: var(--muted-foreground);
+}
+
+/* ---------- 页面头 ---------- */
+
+.fs-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px 16px;
+  flex-wrap: wrap;
+}
+
+.fs-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+}
+
+.fs-subtitle {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--muted-foreground);
+}
+
+.fs-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* 服务状态胶囊 */
+.fs-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.fs-pill-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--muted-foreground);
+}
+
+.fs-pill-ok {
+  border-color: transparent;
+  background: color-mix(in oklch, #16a34a 14%, transparent);
+  color: #15803d;
+}
+.fs-pill-ok .fs-pill-dot { background: #16a34a; }
+
+.fs-pill-scanning {
+  border-color: transparent;
+  background: color-mix(in oklch, #2563eb 13%, transparent);
+  color: #1d4ed8;
+}
+.fs-pill-scanning .fs-pill-dot {
+  background: #2563eb;
+  animation: filesearch-pulse 1.4s ease-in-out infinite;
+}
+
+.fs-pill-down,
+.fs-pill-error {
+  border-color: transparent;
+  background: color-mix(in oklch, var(--destructive) 12%, transparent);
+  color: color-mix(in oklch, var(--destructive) 82%, black);
+}
+.fs-pill-down .fs-pill-dot,
+.fs-pill-error .fs-pill-dot { background: var(--destructive); }
+
+.fs-pill-paused {
+  border-color: transparent;
+  background: color-mix(in oklch, #d97706 14%, transparent);
+  color: #b45309;
+}
+.fs-pill-paused .fs-pill-dot { background: #d97706; }
+
+.fs-pill-connecting,
+.fs-pill-idle {
+  color: var(--muted-foreground);
+}
+
+.dark .fs-pill-ok { color: #4ade80; background: color-mix(in oklch, #4ade80 14%, transparent); }
+.dark .fs-pill-ok .fs-pill-dot { background: #4ade80; }
+.dark .fs-pill-scanning { color: #60a5fa; background: color-mix(in oklch, #60a5fa 14%, transparent); }
+.dark .fs-pill-scanning .fs-pill-dot { background: #60a5fa; }
+.dark .fs-pill-paused { color: #fbbf24; background: color-mix(in oklch, #fbbf24 14%, transparent); }
+.dark .fs-pill-paused .fs-pill-dot { background: #fbbf24; }
+
+@keyframes filesearch-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+
+/* ---------- 按钮（对齐宿主 ui/button）：规则已移至 FS_FORM_CSS 运行时注入（@scope 缺陷） ---------- */
+
+/* ---------- 通知条 / 错误条 ---------- */
+
+.fs-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 8px 12px;
+  border-radius: calc(var(--radius) - 2px);
+  font-size: 13px;
+  border: 1px solid transparent;
+  animation: filesearch-fade-in 0.2s ease;
+}
+
+.fs-notice::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.fs-notice-success {
+  background: color-mix(in oklch, #16a34a 10%, transparent);
+  border-color: color-mix(in oklch, #16a34a 30%, transparent);
+  color: #15803d;
+}
+.fs-notice-success::before { background: #16a34a; }
+
+.fs-notice-info {
+  background: var(--secondary);
+  color: var(--muted-foreground);
+}
+.fs-notice-info::before { background: var(--muted-foreground); }
+
+/* 「恢复默认」确认条：文案占满剩余宽度，取消按钮靠右，不被挤压 */
+.fs-settings .fs-notice-confirm {
+  align-items: flex-start;
+  gap: 12px;
+}
+.fs-settings .fs-notice-confirm .fs-notice-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  line-height: 1.5;
+}
+.fs-settings .fs-notice-confirm .fs-btn {
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+
+.fs-notice-error {
+  background: color-mix(in oklch, var(--destructive) 9%, transparent);
+  border-color: color-mix(in oklch, var(--destructive) 28%, transparent);
+  color: color-mix(in oklch, var(--destructive) 80%, black);
+}
+.fs-notice-error::before { background: var(--destructive); }
+
+.dark .fs-notice-success { color: #4ade80; background: color-mix(in oklch, #4ade80 12%, transparent); }
+.dark .fs-notice-success::before { background: #4ade80; }
+
+.fs-alert {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: calc(var(--radius) - 2px);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.fs-alert-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fs-alert-error {
+  background: color-mix(in oklch, var(--destructive) 8%, transparent);
+  border: 1px solid color-mix(in oklch, var(--destructive) 24%, transparent);
+  color: var(--foreground);
+}
+
+.fs-alert-error strong {
+  color: color-mix(in oklch, var(--destructive) 85%, black);
+  font-weight: 600;
+}
+
+.dark .fs-alert-error strong { color: color-mix(in oklch, var(--destructive) 75%, white); }
+
+.fs-card-alert {
+  margin: 0 0 14px;
+}
+
+/* 字段级错误提示（知识库路径校验失败，就近显示在输入框下） */
+.fs-field-error {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--destructive, #dc2626);
+}
+
+.fs-alert-action {
+  flex-shrink: 0;
+}
+
+@keyframes filesearch-fade-in {
+  from { opacity: 0; transform: translateY(-2px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------- 概览统计（状态条） ---------- */
+
+.fs-stats {
+  /* **五格一行**（默认窗口下）。
+     内容区可用宽 ≈ 720px（窗口 1200px，settings 页），故门槛取 134px：
+       5*134 + 4*10 = 710 ≤ 720 ⇒ 恰好一行五格。
+     134 是「一行放得下」与「格内可读」的交点：12px 字体下各标签自然宽度
+       中文最长 61px（已索引文件 / 未纳入索引）、英文最长 122px（Pending）——
+       见下面 .fs-stat-label 的省略策略。
+     不用 repeat(5, minmax(0,1fr))：窄窗口会强行挤成 5 列，每格 <100px 更不能读；
+       auto-fit 在窄屏自然退成 4/3/2 列，格子仍是可读宽度。 */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(134px, 1fr));
+  gap: 10px;
+}
+
+.fs-stat {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 2px);
+  box-shadow: 0 1px 2px 0 color-mix(in oklch, var(--foreground) 4%, transparent);
+  /* **不能**用 overflow: hidden —— 格内 ? 提示气泡（.fs-tooltip）是
+     position:absolute + 320px 宽，会越出格子（上 54px / 左 75px / 右 78px）被四边
+     裁掉，表现为「提示被相邻框遮住、显示不全」。
+     底部 3px 进度条被圆角裁齐的职责改由 .fs-progress 自己承担（见下）。 */
+  overflow: visible;
+}
+
+/* 悬停时把整格抬到同级卡片之上。
+   气泡 z-index:40 是格内层级，只有把**格子本身**提起来才能压住相邻格与下方卡片；
+   否则靠后绘制的兄弟元素会盖住气泡。 */
+.fs-stat:hover {
+  z-index: 3;
+}
+
+.fs-stat-label {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  /* 标签**永不换行**：卡宽 134px 时内容宽 106px，而英文标签自然宽可达 122px，
+     折成两行会把整格撑高、五格不齐平。省略号胜过折行——标签是给人扫一眼的分类词，
+     不是要读全的句子。（故该标签文案也取 `Pending` 而不是 `Pending vectorization`。） */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fs-stat-value {
+  font-size: 20px;
+  font-weight: 650;
+  line-height: 1.2;
+  color: var(--foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+.fs-stat-value.is-ok { color: #15803d; }
+.fs-stat-value.is-error { color: var(--destructive); }
+/* 未纳入索引 / 无文本这类「不是错误、但也没索引」的数 —— 弱化显示，
+   与 is-error（真失败，红）和正常值区分开。 */
+.fs-stat-value-muted { color: var(--muted-foreground); font-weight: 600; }
+/* 统计格标题行内的 ? 提示（全 span 链路，天然绕开宿主 @scope 表单控件缺陷）。 */
+.fs-stat-label .fs-help { margin-left: 4px; vertical-align: -1px; }
+.dark .fs-stat-value.is-ok { color: #4ade80; }
+
+.fs-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: var(--muted);
+  /* 格子是 overflow: visible（为了不被裁掉 ? 提示气泡），进度条不会被格子圆角裁齐，
+     故自己补上同样的下圆角。 */
+  border-radius: 0 0 calc(var(--radius) + 1px) calc(var(--radius) + 1px);
+}
+
+.fs-progress i {
+  display: block;
+  height: 100%;
+  border-radius: 0 2px 2px 0;
+  background: var(--primary);
+  transition: width 0.4s ease;
+}
+
+/* 进度下方文件计数（walked/total） */
+.fs-stat-sub {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 失败文件明细展开链接 + 明细列表 */
+.fs-stat-link {
+  align-self: flex-start;
+  font-size: 12px;
+  /* 同 .fs-stat-label：卡内横向空间只有约 106px，链接超宽就省略而不是折行
+     —— 折行会把该格撑高，五格就不齐平了。 */
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- 明细面板（失败文件 / 未纳入索引）共用外观 ----------
+   两条外观要求：
+     ① 两个面板一眼可辨 → 面板顶部有固定标题行（标题 + 条数）；
+     ② 不因文件多而变长 → 高度固定、列表在框内滚动；滚动条常显且轨道可见
+       （overlay 滚动条不动鼠标看不出来，看起来就像整块在变长）。
+   注意：本段全部是 div/span/ul 规则（无 button/input），可安全放进 @scope 注入的
+   filesearch.css；其中用到的折叠按钮样式 .fs-link 在 FS_FORM_CSS 里。 */
+.fs-panel-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  /* 收紧边距（6/6）：整框偏高时标题行也一起压一压 */
+  margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.fs-panel-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--foreground);
+  /* h3 自带 1em 上下外边距（约 26px），会把标题行撑到 63px 高。
+     面板标题是「一行抬头」，不需要块级默认间距 —— 归零，整框随之矮一截。 */
+  margin: 0;
+  line-height: 1.3;
+}
+
+.fs-panel-count {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 旧类名，规则保留以防旧产物引用（新代码不再使用）。 */
+.fs-panel-summary {
+  margin: -2px 0 10px;
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+/* 旧类名，规则保留以防旧产物引用（新代码不再使用；汇总句改挂到计数元素的 title 上）。 */
+.fs-panel-note {
+  margin-left: auto;
+  min-width: 0;
+  font-size: 12px;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 滚动条：让它**看得见**。
+   轨道用可辨的凹槽色（默认的 var(--muted) #f2f2f2 在白卡片上几乎看不见），
+   滑块用更实的灰；内容不溢出时 WebKit 不画滑块（符合预期）。
+   ⚠️ 不要写标准属性 `scrollbar-width` / `scrollbar-color`：它们一旦出现，
+   WebKit 会忽略下面这组 ::-webkit-scrollbar 规则。 */
+.fs-failed-list::-webkit-scrollbar {
+  width: 10px;
+}
+
+.fs-failed-list::-webkit-scrollbar-track {
+  /* 凹槽常显：14% 前景灰 —— 在白色卡片上是「一眼能看出这里有个滚动条」的深度，
+     又不会像纯灰条那样抢眼。 */
+  background: color-mix(in oklch, var(--muted-foreground) 14%, transparent);
+  border-radius: 5px;
+}
+
+.fs-failed-list::-webkit-scrollbar-thumb {
+  /* 滑块：45% 前景灰，比轨道明显深一档；内容不溢出时 WebKit 不画滑块（符合预期，
+     那时候确实没东西可滚），溢出了就会看到它。 */
+  background: color-mix(in oklch, var(--muted-foreground) 45%, transparent);
+  border-radius: 5px;
+  min-height: 24px;  /* 列表很长时滑块不至于细成一根线 */
+}
+
+.fs-failed-list::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklch, var(--muted-foreground) 65%, transparent);
+}
+
+.fs-failed-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 4px 0 0;
+  /* **两列 —— 文件名 | 原因**。
+     不设左侧徽标列：它只是把「原因」换个措辞再说一遍（TYPE NOT SELECTED ↔ 格式未勾选），
+     且按内容宽度定宽，正是「列对不齐」的根源；真信息（是哪个文件、为什么没进索引）
+     就在这两列里。
+     路径占 1.1 份、原因占 1 份；两个面板共用同一套轨道 ⇒ 跨面板也逐列对齐。
+     宽度必须用 minmax(0, …)：否则 grid 的 min-content 会让长路径撑破轨道而不是换行。 */
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  column-gap: 12px;
+  gap: 8px;
+  /* 高度固定，内容在框内滚（不随条数变长）。
+     100px 是「一眼能看到两条、又不占版面」的取值——整框高度 ≈ 卡片 padding 36
+     + 标题行 30 + 100，且仍可滚。 */
+  height: 100px;
+  overflow-y: scroll;  /* scroll 而非 auto：始终保留滚动条槽，宽度不跳 */
+}
+
+.fs-failed-item {
+  /* 行本身是 grid 的 item：用 subgrid 继承父级列轨道，让两列铺满整行宽度
+     （display:contents 也可行但要改 JSX 结构）。 */
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: baseline;
+  min-width: 0;
+  font-size: 12px;
+}
+
+.fs-failed-path {
+  min-width: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  word-break: break-all;
+  color: var(--foreground);
+}
+
+.fs-failed-reason {
+  min-width: 0;
+  /* 说明列：不再右对齐 —— 左对齐才和「路径」列形成整齐的两条竖直基线
+     （右对齐的观感是「参差不齐」）。三行限高保留，避免超长说明把行撑高。 */
+  word-break: break-word;
+  /* 最多占三行：超长说明会把行撑高、面板变挤，故限高。
+     （文案按语言出词，不再塞原始字节 repr 这类长串。） */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ---------- 卡片 ---------- */
+
+.fs-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 2px);
+  box-shadow: 0 1px 2px 0 color-mix(in oklch, var(--foreground) 4%, transparent);
+  padding: 18px 20px;
+}
+
+.fs-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.fs-card-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.fs-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 未保存标记（跟随卡片标题，h2 内联） */
+.fs-unsaved {
+  margin-left: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: color-mix(in oklch, #b45309 85%, black);
+}
+
+.dark .fs-unsaved { color: #fbbf24; }
+
+/* ---------- 表单 ---------- */
+
+.fs-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fs-form-group + .fs-form-group {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.fs-form-group-last {
+  padding-bottom: 2px;
+}
+
+.fs-group-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.fs-group-title {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--muted-foreground);
+}
+
+.fs-group-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fs-chip-count {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}
+
+/* .fs-link（button）已移至 FS_FORM_CSS 运行时注入 */
+
+.fs-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 16px;
+}
+
+.fs-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.fs-field-wide { grid-column: 1 / -1; }
+
+.fs-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.fs-hint {
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+/* 自动索引开关文字区若仍有 hint 时与 label 对齐（现提示已移入 ? 气泡） */
+.fs-toggle-text .fs-hint {
+  margin-left: 0;
+}
+
+/* ---------- 字段 ? 帮助图标 + 纯 CSS hover tooltip ---------- */
+
+.fs-label-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.fs-help {
+  position: relative;
+  /* 抬到铺满 label 的透明 checkbox 之上（FS_FORM_CSS 的
+     `.fs-switch input { position:absolute; inset:0 }`），否则 ? 图标的 hover 与
+     click 全被 input 吃掉 → 气泡不显示、点提示反而切换开关。 */
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--muted-foreground);
+  user-select: none;
+  outline: none;
+  transition: border-color 0.12s ease, color 0.12s ease;
+}
+
+.fs-help:hover,
+.fs-help:focus {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.fs-help-icon {
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* 提示气泡：hover ? 图标或键盘聚焦时显示（纯 CSS，无宿主组件依赖） */
+.fs-tooltip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 7px);
+  transform: translateX(-50%) translateY(3px);
+  width: max-content;
+  max-width: 320px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--foreground);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.55;
+  text-align: left;
+  white-space: normal;
+  box-shadow: 0 8px 20px rgb(0 0 0 / 0.16);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 40;
+  transition: opacity 0.13s ease, transform 0.13s ease, visibility 0.13s;
+}
+
+.fs-help:hover .fs-tooltip,
+.fs-help:focus .fs-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+/* 图标上方的隐形桥接区：鼠标从 ? 移向气泡途中不掉 hover */
+.fs-help::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 14px;
+  bottom: calc(100% - 2px);
+}
+
+/* .fs-input 表单控件规则已移至 FilesearchPage.tsx 的 FS_FORM_CSS 运行时注入
+  （K3 WebKitGTK @scope 缺陷：宿主 @scope 包裹样式不作用于 input/textarea/button） */
+
+/* 文件类型 chips */
+.fs-types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* 格式分组（文档 / 代码 / 表格 / 图片） */
+.fs-type-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fs-type-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fs-type-group-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.fs-type-group-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--foreground);
+  letter-spacing: 0.02em;
+}
+
+.fs-type-group-tip {
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+
+.fs-chip {
+  position: relative;
+  display: inline-flex;
+}
+
+/* .fs-chip input 隐藏 checkbox 规则已移至 FS_FORM_CSS 运行时注入 */
+
+.fs-chip-box {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 11px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.08s ease;
+}
+
+.fs-chip:hover .fs-chip-box {
+  border-color: color-mix(in oklch, var(--ring) 60%, var(--border));
+  color: var(--foreground);
+  background: color-mix(in oklch, var(--muted) 40%, transparent);
+}
+
+.fs-chip:active .fs-chip-box {
+  transform: scale(0.96);
+}
+
+/* chips 选中态（input:checked 组合选择器）已移至 FS_FORM_CSS 运行时注入 */
+.fs-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+/* .fs-switch input 隐藏 checkbox 规则已移至 FS_FORM_CSS 运行时注入 */
+
+/* 标题行内联开关（自动索引在「索引配置」标题行） */
+.fs-switch-inline {
+  gap: 6px;
+  font-size: 13px;
+}
+
+.fs-switch-inline .fs-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}
+
+.fs-switch-inline .fs-switch-text {
+  min-width: 0;
+  white-space: nowrap;
+}
+
+
+.fs-switch-track {
+  display: inline-flex;
+  align-items: center;
+  width: 34px;
+  height: 20px;
+  padding: 2px;
+  border-radius: 999px;
+  background: var(--input);
+  transition: background-color 0.18s ease, box-shadow 0.18s ease;
+  flex-shrink: 0;
+}
+
+.fs-switch-thumb {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--background);
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.25);
+  transition: transform 0.18s ease;
+}
+
+/* switch 选中态（input:checked 组合选择器）已移至 FS_FORM_CSS 运行时注入 */
+
+.fs-switch-text {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  min-width: 42px;
+}
+
+/* ---------- 检索验证 ---------- */
+
+.fs-verify {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 14px;
+}
+
+/* .fs-verify-input/.fs-verify-btn 已移至 FS_FORM_CSS 运行时注入 */
+
+/* 状态（空态 / 加载 / 错误） */
+.fs-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 96px;
+  padding: 18px 12px;
+  border: 1px dashed var(--border);
+  border-radius: calc(var(--radius) - 2px);
+  background: color-mix(in oklch, var(--muted) 35%, transparent);
+  text-align: center;
+}
+
+.fs-state-loading {
+  flex-direction: row;
+  gap: 10px;
+  border-style: solid;
+  color: var(--muted-foreground);
+  font-size: 13px;
+}
+
+.fs-state-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.fs-state-desc {
+  max-width: 420px;
+  font-size: 12.5px;
+  color: var(--muted-foreground);
+  line-height: 1.6;
+}
+
+.fs-spinner {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  border-top-color: var(--primary);
+  animation: filesearch-spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes filesearch-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 结果列表 */
+.fs-result-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fs-result {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 2px);
+  background: color-mix(in oklch, var(--muted) 22%, transparent);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.fs-result:hover {
+  border-color: color-mix(in oklch, var(--ring) 45%, var(--border));
+  background: color-mix(in oklch, var(--muted) 40%, transparent);
+}
+
+.fs-result-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.fs-result-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--foreground);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 相关度名次徽标。用名次而不是 confidence 百分比：那个数字是 min-max 归一化结果
+   （每次检索头名恒 100%、末名恒 0%），显示成百分比会被读成「匹配度」。
+   名次是它真正表达的信息，故配色中性（不用绿色暗示「好」）。 */
+.fs-result-rank {
+  flex-shrink: 0;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: color-mix(in oklch, currentColor 10%, transparent);
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.dark .fs-result-rank { color: #94a3b8; }
+
+.fs-result-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-top: 5px;
+  font-size: 12px;
+}
+
+.fs-tag {
+  /* 定宽轨内的徽标：左对齐、可截断，超长标签不撑破轨道（grid 轨宽固定）。 */
+  justify-self: start;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+  padding: 0 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  line-height: 18px;
+}
+
+.fs-result-path {
+  margin-top: 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  font-size: 12px;
+  color: var(--muted-foreground);
+  word-break: break-all;
+  line-height: 1.45;
+}
+
+.fs-result-summary {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--foreground);
+}
+
+/* ---------- 响应式 ---------- */
+
+@media (max-width: 760px) {
+  .fs-settings { padding: 4px 14px 40px; }
+  .fs-grid { grid-template-columns: 1fr; }
+  .fs-verify { flex-direction: column; }
+}
